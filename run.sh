@@ -4,6 +4,6 @@ do
   git add data/
   git commit -m "update"
   git push
-  sleep 60000
+  sleep 60
 done
 
