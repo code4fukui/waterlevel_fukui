@@ -1,0 +1,479 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS">
+<meta content="text/css" http-equiv="Content-Style-Style">
+<meta content="text/javascript" http-equiv="Content-Script-Style">
+<meta content="no-cache" http-equiv="pragma">
+<title>水位状況図</title>
+<link href="../css/map.css" type="text/css" rel="stylesheet">
+<script src="../js/utildlg.js" type="text/javascript"></script><script src="../js/graphOpen.js" type="text/javascript"></script><script src="../js/mapdiv.js" type="text/javascript"></script><script src="../js/setarea.js" type="text/javascript"></script><script src="../js/param.js" type="text/javascript"></script><script src="../js/commons.js" language="JavaScript"></script><script type="text/javascript">
+<!--
+var area="0";
+var nw="1";
+var datatime="20210814082000";
+
+//局名表示
+function mykyoku(count){
+  divVisible("kyokuriver",count);
+  divName("hyouji","局名表示","局名非表示");
+}
+//データ表示
+function mydata(count){
+  divVisible("datariver",count);
+  divName("datavisi","データ表示","データ非表示");
+}
+//グラフor警報履歴
+function jump(type,no,time,nw) {        // クリック
+  if(type == "River"){
+    riverGraph(no,time,nw);
+  }else{
+    riverGageGraph(no,time,nw);
+  }
+}
+var suii = 0;
+//TM観測局情報取得開始
+function loadTMSite(){
+  divName("hyouji2","危機管理型水位計局表示","危機管理型水位計局非表示");
+  if( suii == 1){
+    var tm_site_river = document.getElementById("tm_site_rivergage");
+    tm_site_river.innerHTML = "";
+    suii = 0;
+  } else {
+    var areaparam = "&mp=0&no=0&fn=0";
+    if(Number(area) != 0){
+      areaparam = "&mp=1&no="+area+"&fn="+area;
+    }
+    var riverLoader = new DynamicLoader(document.body);
+    riverLoader.onload = loadRiverSite;
+    riverLoader.load("../servlet/bousaiweb.servletBousaiMap?nw="+nw+"&tm="+datatime+"&dk=41&sb=0&sv=1" + areaparam + "&spn=0&ga=4&gk=0&gk2=0&gn=0&gl=0&gw=0&go=0&omp=0&opn=0&mcdk=0&mcp=0&madps=0&mad=0");
+  }
+}
+//水位局状態取得
+function loadRiverSite(loader){
+  try{
+    siteLocationRiver = loader.getContents().siteLocationRiver;
+
+    var riverObj = loader.getContents().document.getElementById("river_set");
+    var tm_site_river = document.getElementById("tm_site_rivergage");
+    tm_site_river.innerHTML = riverObj.innerHTML;
+    loader.destroy();
+    suii = 1;
+  }catch(e){
+    suii = 0;
+  }
+}
+
+
+          --></script>
+</head>
+<body onload="loadTMSite();" id="idbody">
+<form name="form1">
+<table border="0">
+<tr>
+<td nowrap="nowrap" class="kind">水位状況図(全県)</td><td nowrap="nowrap" class="date">&nbsp;&nbsp;2021年08月14日08時20分&nbsp;現在</td>
+</tr>
+</table>
+<div class="radio">シンボルをクリックするとグラフを表示します。</div>
+<div nowrap="nowrap" class="tbkyoku" style="
+          position:absolute;left:470px;top:30px;z-index:0;
+        ">
+<a id="hyouji2" href="javascript:void(0)" class="menu" onClick="return loadTMSite();">危機管理型水位計局表示</a>
+</div>
+<div id="mainmap" class="map">
+<img alt="" src="/bousai/map_data_www/river_ken_000.jpg"><div id="menu" style="position:absolute;top:0;left:0;visibility : hidden;z-index:-1"></div>
+<div id="river_set">
+<div style="position:absolute;left:319px;top:125px;z-index:2" id="river1" na="九十九橋" r_na="足羽川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.24[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.80[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;5.60[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;6.10[m]" flag="通常">
+<div onClick="jump('River','1','202108140820','1')" onmouseover="return popInRiver('river1')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:338px;top:127px;z-index:5" id="river2" na="河増" r_na="荒川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.26[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.70[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.60[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','2','202108140820','1')" onmouseover="return popInRiver('river2')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:308px;top:138px;z-index:2" id="river3" na="江端川水門（江端川水位）" r_na="江端川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;5.60[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;5.70[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;6.20[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;8.00[m]" flag="通常">
+<div onClick="jump('River','3','202108140820','1')" onmouseover="return popInRiver('river3')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:306px;top:138px;z-index:2" id="river4" na="江端川水門（日野川水位）" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;5.63[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','4','202108140820','1')" onmouseover="return popInRiver('river4')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:304px;top:122px;z-index:3" id="river5" na="狐川水門（狐川水位）" r_na="狐川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.65[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.40[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.30[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;7.00[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','5','202108140820','1')" onmouseover="return popInRiver('river5')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:302px;top:122px;z-index:2" id="river6" na="狐川水門（日野川水位）" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.68[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','6','202108140820','1')" onmouseover="return popInRiver('river6')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:323px;top:129px;z-index:2" id="river7" na="荒川水門（荒川水位）" r_na="荒川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;5.13[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;6.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;8.30[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;10.50[m]" flag="通常">
+<div onClick="jump('River','7','202108140820','1')" onmouseover="return popInRiver('river7')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:325px;top:129px;z-index:2" id="river8" na="荒川水門（足羽川水位）" r_na="足羽川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;5.08[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','8','202108140820','1')" onmouseover="return popInRiver('river8')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:342px;top:119px;z-index:6" id="river9" na="原目" r_na="荒川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;1.97[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.20[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.50[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;1.80[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" flag="避難判断水位超過">
+<div onClick="jump('River','9','202108140820','1')" onmouseover="return popInRiver('river9')" onmouseout="return popOut()" class="icon_river river_5"></div>
+</div>
+<div style="position:absolute;left:363px;top:119px;z-index:3" id="river10" na="諏訪間" r_na="永平寺川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;1.41[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.10[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.90[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','10','202108140820','1')" onmouseover="return popInRiver('river10')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:379px;top:152px;z-index:3" id="river12" na="朝谷" r_na="足羽川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.93[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.20[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;3.90[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.70[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','12','202108140820','1')" onmouseover="return popInRiver('river12')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:321px;top:141px;z-index:5" id="river13" na="江端" r_na="江端川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.35[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.70[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.62[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;4.36[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.14[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','13','202108140820','1')" onmouseover="return popInRiver('river13')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:307px;top:128px;z-index:5" id="river14" na="若杉" r_na="狐川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;4.01[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.90[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.70[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.10[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','14','202108140820','1')" onmouseover="return popInRiver('river14')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:318px;top:121px;z-index:5" id="river15" na="上里" r_na="底喰川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;3.90[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.30[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.80[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.15[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','15','202108140820','1')" onmouseover="return popInRiver('river15')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:329px;top:106px;z-index:3" id="river16" na="上森田" r_na="芳野川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;6.74[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;6.30[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;7.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;8.08[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','16','202108140820','1')" onmouseover="return popInRiver('river16')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:313px;top:148px;z-index:3" id="river17" na="安保（朝六ツ川）" r_na="朝六ツ川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;7.08[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;6.80[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;7.20[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;8.20[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','17','202108140820','1')" onmouseover="return popInRiver('river17')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:334px;top:80px;z-index:3" id="river22" na="長屋" r_na="田島川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.71[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.20[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.20[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','22','202108140820','1')" onmouseover="return popInRiver('river22')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:314px;top:84px;z-index:2" id="river23" na="下兵庫" r_na="兵庫川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.17[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.60[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.10[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;3.30[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" flag="通常">
+<div onClick="jump('River','23','202108140820','1')" onmouseover="return popInRiver('river23')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:332px;top:70px;z-index:2" id="river24" na="矢地" r_na="竹田川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.44[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;5.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.80[m]" flag="通常">
+<div onClick="jump('River','24','202108140820','1')" onmouseover="return popInRiver('river24')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:339px;top:81px;z-index:2" id="river25" na="里竹田" r_na="竹田川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.69[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" flag="通常">
+<div onClick="jump('River','25','202108140820','1')" onmouseover="return popInRiver('river25')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:326px;top:64px;z-index:2" id="river26" na="六日" r_na="竹田川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.36[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;4.60[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.20[m]" flag="通常">
+<div onClick="jump('River','26','202108140820','1')" onmouseover="return popInRiver('river26')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:297px;top:68px;z-index:2" id="river27" na="岩崎(金井)" r_na="竹田川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.83[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.60[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.70[m]" flag="通常">
+<div onClick="jump('River','27','202108140820','1')" onmouseover="return popInRiver('river27')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:307px;top:95px;z-index:2" id="river28" na="安沢橋(石塚)" r_na="磯部川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.56[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.20[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.70[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.50[m]" flag="通常">
+<div onClick="jump('River','28','202108140820','1')" onmouseover="return popInRiver('river28')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:369px;top:87px;z-index:2" id="river29" na="平岩" r_na="竹田川" time="08/14&nbsp;08：00" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.38[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.30[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.90[m]" flag="通常">
+<div onClick="jump('River','29','202108140820','1')" onmouseover="return popInRiver('river29')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:363px;top:79px;z-index:1" id="river30" na="川上" r_na="竹田川" time="08/14&nbsp;08：00" suii="***[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.80[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.10[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" flag="欠測">
+<div onClick="jump('River','30','202108140820','1')" onmouseover="return popInRiver('river30')" onmouseout="return popOut()" class="icon_river river_kessoku"></div>
+</div>
+<div style="position:absolute;left:350px;top:80px;z-index:2" id="river31" na="坪江" r_na="竹田川" time="08/14&nbsp;08：00" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.58[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.90[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.20[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.80[m]" flag="通常">
+<div onClick="jump('River','31','202108140820','1')" onmouseover="return popInRiver('river31')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:340px;top:75px;z-index:2" id="river32" na="石塚" r_na="竹田川" time="08/14&nbsp;08：00" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.27[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.60[m]" flag="通常">
+<div onClick="jump('River','32','202108140820','1')" onmouseover="return popInRiver('river32')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:459px;top:155px;z-index:2" id="river43" na="松丸" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.29[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.00[m]" flag="通常">
+<div onClick="jump('River','43','202108140820','1')" onmouseover="return popInRiver('river43')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:445px;top:159px;z-index:2" id="river45" na="井ノ口" r_na="真名川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.05[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.00[m]" flag="通常">
+<div onClick="jump('River','45','202108140820','1')" onmouseover="return popInRiver('river45')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:438px;top:148px;z-index:5" id="river46" na="新在家" r_na="清滝川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.64[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.20[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.50[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.80[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','46','202108140820','1')" onmouseover="return popInRiver('river46')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:428px;top:155px;z-index:3" id="river47" na="大橋" r_na="赤根川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.16[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.90[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.20[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','47','202108140820','1')" onmouseover="return popInRiver('river47')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:504px;top:188px;z-index:5" id="river48" na="貝皿" r_na="石徹白川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.33[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.40[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.00[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','48','202108140820','1')" onmouseover="return popInRiver('river48')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:443px;top:207px;z-index:2" id="river49" na="黒当戸" r_na="真名川" time="08/14&nbsp;08：00" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;4.65[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','49','202108140820','1')" onmouseover="return popInRiver('river49')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:475px;top:218px;z-index:2" id="river51" na="秋生" r_na="真名川" time="08/14&nbsp;08：00" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;2.45[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','51','202108140820','1')" onmouseover="return popInRiver('river51')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:433px;top:128px;z-index:2" id="river62" na="比島" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.13[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.60[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.80[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;6.30[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;6.80[m]" flag="通常">
+<div onClick="jump('River','62','202108140820','1')" onmouseover="return popInRiver('river62')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:409px;top:120px;z-index:3" id="river63" na="小舟渡" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.33[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.30[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.30[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.30[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','63','202108140820','1')" onmouseover="return popInRiver('river63')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:445px;top:123px;z-index:2" id="river64" na="砂留花橋（第３水位局）" r_na="浄土寺川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.07[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','64','202108140820','1')" onmouseover="return popInRiver('river64')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:439px;top:122px;z-index:2" id="river65" na="長山" r_na="浄土寺川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.11[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','65','202108140820','1')" onmouseover="return popInRiver('river65')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:433px;top:125px;z-index:2" id="river66" na="栄" r_na="浄土寺川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.37[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','66','202108140820','1')" onmouseover="return popInRiver('river66')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:311px;top:160px;z-index:2" id="river74" na="黒津川水門（黒津川水位）" r_na="黒津川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;8.66[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;9.40[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;9.65[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;10.70[m]" flag="通常">
+<div onClick="jump('River','74','202108140820','1')" onmouseover="return popInRiver('river74')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:301px;top:162px;z-index:2" id="river75" na="糺橋" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.20[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.20[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;4.80[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.40[m]" flag="通常">
+<div onClick="jump('River','75','202108140820','1')" onmouseover="return popInRiver('river75')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:299px;top:153px;z-index:2" id="river76" na="出作" r_na="浅水川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;4.86[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;5.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;5.50[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;7.50[m]" flag="通常">
+<div onClick="jump('River','76','202108140820','1')" onmouseover="return popInRiver('river76')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:324px;top:169px;z-index:5" id="river77" na="松成" r_na="鞍谷川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.93[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.80[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.90[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;6.20[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','77','202108140820','1')" onmouseover="return popInRiver('river77')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:313px;top:159px;z-index:2" id="river78" na="黒津川水門（浅水川水位）" r_na="浅水川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;10.94[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','78','202108140820','1')" onmouseover="return popInRiver('river78')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:349px;top:170px;z-index:3" id="river79" na="北中" r_na="河和田川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.90[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;0.70[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.20[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;1.90[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','79','202108140820','1')" onmouseover="return popInRiver('river79')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:311px;top:158px;z-index:5" id="river80" na="鳥羽" r_na="浅水川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;5.18[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;4.40[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.90[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;5.60[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;6.50[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','80','202108140820','1')" onmouseover="return popInRiver('river80')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:296px;top:155px;z-index:2" id="river81" na="田中" r_na="和田川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;10.47[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','81','202108140820','1')" onmouseover="return popInRiver('river81')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:296px;top:157px;z-index:2" id="river82" na="石田川水門（日野川水位）" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;9.26[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','82','202108140820','1')" onmouseover="return popInRiver('river82')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:298px;top:156px;z-index:2" id="river83" na="石田川水門（石田川水位）" r_na="石田川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;9.59[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','83','202108140820','1')" onmouseover="return popInRiver('river83')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:306px;top:207px;z-index:2" id="river88" na="中平吹" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.03[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" flag="通常">
+<div onClick="jump('River','88','202108140820','1')" onmouseover="return popInRiver('river88')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:321px;top:185px;z-index:3" id="river89" na="北" r_na="浅水川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.94[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.80[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.30[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.80[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','89','202108140820','1')" onmouseover="return popInRiver('river89')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:295px;top:191px;z-index:6" id="river90" na="上太田" r_na="吉野瀬川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;2.84[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.40[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;2.70[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.20[m]" flag="避難判断水位超過">
+<div onClick="jump('River','90','202108140820','1')" onmouseover="return popInRiver('river90')" onmouseout="return popOut()" class="icon_river river_5"></div>
+</div>
+<div style="position:absolute;left:303px;top:178px;z-index:1" id="river91" na="家久(鯖江)" r_na="日野川" time="08/14&nbsp;08：00" suii="***[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" flag="欠測">
+<div onClick="jump('River','91','202108140820','1')" onmouseover="return popInRiver('river91')" onmouseout="return popOut()" class="icon_river river_kessoku"></div>
+</div>
+<div style="position:absolute;left:313px;top:224px;z-index:2" id="river92" na="聖橋" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.52[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.10[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.30[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;4.20[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.80[m]" flag="通常">
+<div onClick="jump('River','92','202108140820','1')" onmouseover="return popInRiver('river92')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:314px;top:242px;z-index:3" id="river93" na="今庄" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.31[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.30[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.80[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.80[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','93','202108140820','1')" onmouseover="return popInRiver('river93')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:347px;top:266px;z-index:2" id="river95" na="二ツ屋" r_na="日野川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;349.81[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','95','202108140820','1')" onmouseover="return popInRiver('river95')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:338px;top:269px;z-index:2" id="river96" na="岩谷" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.66[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','96','202108140820','1')" onmouseover="return popInRiver('river96')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:302px;top:182px;z-index:2" id="river97" na="家久（吉野瀬川）" r_na="吉野瀬川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;1.02[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.10[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.90[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.70[m]" flag="通常">
+<div onClick="jump('River','97','202108140820','1')" onmouseover="return popInRiver('river97')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:372px;top:196px;z-index:2" id="river107" na="稲荷" r_na="足羽川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.28[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.90[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.80[m]" flag="通常">
+<div onClick="jump('River','107','202108140820','1')" onmouseover="return popInRiver('river107')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:330px;top:186px;z-index:2" id="river108" na="粟田部" r_na="鞍谷川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.29[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.30[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.80[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;2.10[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.70[m]" flag="通常">
+<div onClick="jump('River','108','202108140820','1')" onmouseover="return popInRiver('river108')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:389px;top:221px;z-index:2" id="river109" na="河内" r_na="足羽川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;-0.35[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','109','202108140820','1')" onmouseover="return popInRiver('river109')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:358px;top:209px;z-index:3" id="river110" na="新保" r_na="魚見川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.70[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.40[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','110','202108140820','1')" onmouseover="return popInRiver('river110')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:335px;top:177px;z-index:3" id="river111" na="東庄境" r_na="服部川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.42[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.10[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.50[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.20[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','111','202108140820','1')" onmouseover="return popInRiver('river111')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:284px;top:160px;z-index:5" id="river121" na="宝泉寺" r_na="天王川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;3.13[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.20[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','121','202108140820','1')" onmouseover="return popInRiver('river121')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:289px;top:163px;z-index:5" id="river122" na="近田橋(気比庄)" r_na="和田川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.27[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','122','202108140820','1')" onmouseover="return popInRiver('river122')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:263px;top:174px;z-index:5" id="river124" na="江波" r_na="天王川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;1.94[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.40[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" flag="はん濫注意水位超過">
+<div onClick="jump('River','124','202108140820','1')" onmouseover="return popInRiver('river124')" onmouseout="return popOut()" class="icon_river river_2"></div>
+</div>
+<div style="position:absolute;left:259px;top:294px;z-index:3" id="river134" na="呉竹" r_na="笙の川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.33[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.70[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;2.10[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','134','202108140820','1')" onmouseover="return popInRiver('river134')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:262px;top:303px;z-index:2" id="river135" na="堂" r_na="笙の川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.46[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" flag="通常">
+<div onClick="jump('River','135','202108140820','1')" onmouseover="return popInRiver('river135')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:258px;top:299px;z-index:2" id="river136" na="野神" r_na="笙の川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.75[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.70[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" flag="通常">
+<div onClick="jump('River','136','202108140820','1')" onmouseover="return popInRiver('river136')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:210px;top:311px;z-index:2" id="river137" na="河原市" r_na="耳川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.26[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.80[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.20[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;3.40[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.60[m]" flag="通常">
+<div onClick="jump('River','137','202108140820','1')" onmouseover="return popInRiver('river137')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:193px;top:331px;z-index:2" id="river138" na="鳥浜" r_na="はす川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.75[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.20[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;1.60[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.00[m]" flag="通常">
+<div onClick="jump('River','138','202108140820','1')" onmouseover="return popInRiver('river138')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:271px;top:292px;z-index:2" id="river139" na="木の芽" r_na="木の芽川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.41[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','139','202108140820','1')" onmouseover="return popInRiver('river139')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:251px;top:295px;z-index:2" id="river140" na="四石橋" r_na="井の口川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.82[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.70[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;2.10[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" flag="通常">
+<div onClick="jump('River','140','202108140820','1')" onmouseover="return popInRiver('river140')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:181px;top:326px;z-index:2" id="river141" na="三方湖" r_na="三方湖" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.65[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;0.70[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.00[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;1.30[m]" flag="通常">
+<div onClick="jump('River','141','202108140820','1')" onmouseover="return popInRiver('river141')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:118px;top:372px;z-index:2" id="river150" na="中井" r_na="南川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.54[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.80[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.20[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;5.10[m]" flag="通常">
+<div onClick="jump('River','150','202108140820','1')" onmouseover="return popInRiver('river150')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:135px;top:358px;z-index:2" id="river151" na="和久里" r_na="南川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.24[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.90[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.10[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;4.40[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.70[m]" flag="通常">
+<div onClick="jump('River','151','202108140820','1')" onmouseover="return popInRiver('river151')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:101px;top:394px;z-index:2" id="river152" na="小倉" r_na="南川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.57[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.10[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.70[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.40[m]" flag="通常">
+<div onClick="jump('River','152','202108140820','1')" onmouseover="return popInRiver('river152')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:105px;top:384px;z-index:2" id="river153" na="和多田" r_na="南川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.97[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.10[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;4.50[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;7.70[m]" flag="通常">
+<div onClick="jump('River','153','202108140820','1')" onmouseover="return popInRiver('river153')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:146px;top:362px;z-index:2" id="river154" na="遠敷" r_na="遠敷川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.23[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;3.30[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;4.10[m]" flag="通常">
+<div onClick="jump('River','154','202108140820','1')" onmouseover="return popInRiver('river154')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:80px;top:365px;z-index:2" id="river155" na="本郷" r_na="佐分利川" time="08/14&nbsp;08：20" suii="&rarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.30[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.40[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.10[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.20[m]" flag="通常">
+<div onClick="jump('River','155','202108140820','1')" onmouseover="return popInRiver('river155')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:154px;top:368px;z-index:2" id="river156" na="四分一" r_na="松永川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.52[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.90[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.40[m]" spkeikai="---" kiken="&nbsp;&nbsp;&nbsp;&nbsp;3.30[m]" flag="通常">
+<div onClick="jump('River','156','202108140820','1')" onmouseover="return popInRiver('river156')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:32px;top:359px;z-index:3" id="river157" na="小和田" r_na="関屋川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;1.88[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.60[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.20[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;2.80[m]" flag="水防団待機水位超過">
+<div onClick="jump('River','157','202108140820','1')" onmouseover="return popInRiver('river157')" onmouseout="return popOut()" class="icon_river river_1"></div>
+</div>
+<div style="position:absolute;left:84px;top:372px;z-index:2" id="river158" na="山田" r_na="大津呂川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.13[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','158','202108140820','1')" onmouseover="return popInRiver('river158')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:538px;top:203px;z-index:2" id="river170" na="箱ヶ瀬-(国)" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;552.30[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','170','202108140820','1')" onmouseover="return popInRiver('river170')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:505px;top:183px;z-index:2" id="river171" na="山原-(国)" r_na="石徹白川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;462.65[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','171','202108140820','1')" onmouseover="return popInRiver('river171')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:457px;top:176px;z-index:2" id="river172" na="五条方下流-(国)" r_na="真名川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.47[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','172','202108140820','1')" onmouseover="return popInRiver('river172')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:503px;top:189px;z-index:2" id="river174" na="朝日-(国)" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.35[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','174','202108140820','1')" onmouseover="return popInRiver('river174')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:527px;top:172px;z-index:2" id="river176" na="石徹白-(国)" r_na="石徹白川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;571.52[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','176','202108140820','1')" onmouseover="return popInRiver('river176')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:439px;top:200px;z-index:2" id="river179" na="中島-(国)" r_na="真名川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.93[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','179','202108140820','1')" onmouseover="return popInRiver('river179')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:443px;top:155px;z-index:2" id="river180" na="麻生島-(国)" r_na="真名川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.30[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','180','202108140820','1')" onmouseover="return popInRiver('river180')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:354px;top:111px;z-index:2" id="river205" na="五松橋-(国)" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.53[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;1.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;2.50[m]" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','205','202108140820','1')" onmouseover="return popInRiver('river205')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:318px;top:109px;z-index:2" id="river206" na="中角-(国)" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.82[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;5.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;7.50[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;8.50[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;9.10[m]" flag="通常">
+<div onClick="jump('River','206','202108140820','1')" onmouseover="return popInRiver('river206')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:308px;top:106px;z-index:2" id="river207" na="高屋-(国)" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.86[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.90[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;5.90[m]" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','207','202108140820','1')" onmouseover="return popInRiver('river207')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:300px;top:148px;z-index:2" id="river208" na="三尾野-(国)" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.43[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;5.50[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;6.50[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;7.00[m]" flag="通常">
+<div onClick="jump('River','208','202108140820','1')" onmouseover="return popInRiver('river208')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:302px;top:131px;z-index:2" id="river209" na="久喜津-(国)" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;4.38[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;5.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;7.70[m]" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','209','202108140820','1')" onmouseover="return popInRiver('river209')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:350px;top:143px;z-index:2" id="river210" na="天神橋-(国)" r_na="足羽川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.92[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','210','202108140820','1')" onmouseover="return popInRiver('river210')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:308px;top:116px;z-index:2" id="river211" na="深谷-(国)" r_na="日野川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;3.43[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;4.00[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;6.00[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;6.90[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;7.50[m]" flag="通常">
+<div onClick="jump('River','211','202108140820','1')" onmouseover="return popInRiver('river211')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:299px;top:92px;z-index:2" id="river212" na="布施田-(国)" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;2.28[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;3.50[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;5.00[m]" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','212','202108140820','1')" onmouseover="return popInRiver('river212')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:292px;top:68px;z-index:2" id="river213" na="三国-(国)" r_na="九頭竜川" time="08/14&nbsp;08：20" suii="&darr;  &nbsp;&nbsp;&nbsp;&nbsp;0.83[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;0.90[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;1.60[m]" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','213','202108140820','1')" onmouseover="return popInRiver('river213')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:175px;top:366px;z-index:2" id="river215" na="天徳寺-(国)" r_na="北川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.05[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','215','202108140820','1')" onmouseover="return popInRiver('river215')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:192px;top:374px;z-index:2" id="river216" na="新道-(国)" r_na="北川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;1.72[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','216','202108140820','1')" onmouseover="return popInRiver('river216')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:144px;top:356px;z-index:2" id="river217" na="高塚-(国)" r_na="北川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;4.34[m]" sitei="&nbsp;&nbsp;&nbsp;&nbsp;5.20[m]" keikai="&nbsp;&nbsp;&nbsp;&nbsp;6.80[m]" spkeikai="&nbsp;&nbsp;&nbsp;&nbsp;7.00[m]" kiken="&nbsp;&nbsp;&nbsp;&nbsp;7.70[m]" flag="通常">
+<div onClick="jump('River','217','202108140820','1')" onmouseover="return popInRiver('river217')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+<div style="position:absolute;left:131px;top:350px;z-index:2" id="river221" na="西津-(国)" r_na="北川" time="08/14&nbsp;08：20" suii="&uarr;  &nbsp;&nbsp;&nbsp;&nbsp;0.59[m]" sitei="---" keikai="---" spkeikai="---" kiken="---" flag="通常">
+<div onClick="jump('River','221','202108140820','1')" onmouseover="return popInRiver('river221')" onmouseout="return popOut()" class="icon_river river_0"></div>
+</div>
+</div>
+<div id="tm_site_rivergage"></div>
+</div>
+<div class="selMap" style="position:absolute;left:615px;top:45px;z-index:1;visibility : visible;">
+<img usemap="#guide" alt="" src="/bousai/map_data_www/guide00.jpg"><map name="guide">
+<area coords="113,1,107,4,105,8,103,13,103,18,110,19,117,21,124,18,125,13,123,9,117,5" alt="あわら市" href="javascript:setArea(3);" shape="poly">
+<area coords="105,9,100,9,96,9,96,18,93,22,98,23,102,28,108,31,115,31,123,35,130,30,139,27,137,22,129,22,126,17,121,21,112,19,108,20,104,17,102,14" alt="坂井市" href="javascript:setArea(3);" shape="poly">
+<area coords="93,24,87,29,83,35,83,42,79,47,74,53,79,55,80,53,86,51,88,49,97,52,105,53,107,56,111,55,121,57,126,63,133,60,141,65,143,60,142,55,142,50,140,46,134,43,130,45,127,43,122,45,119,40,119,38,118,35,113,34,113,31,109,30,102,28,99,25" alt="福井市" href="javascript:setArea(2);" shape="poly">
+<area coords="131,31,123,33,119,33,120,39,122,45,128,44,131,46,135,44,141,43,141,39,134,36,136,34" alt="永平寺町" href="javascript:setArea(2);" shape="poly">
+<area coords="148,26,143,29,137,29,135,33,133,36,141,40,141,44,142,49,148,47,157,49,163,45,170,41,171,39,171,35,165,31,159,27,157,25,152,26" alt="勝山市" href="javascript:setArea(4);" shape="poly">
+<area coords="144,51,145,61,140,71,140,82,138,88,149,92,155,90,162,89,163,87,170,87,173,90,181,87,187,85,191,86,192,81,197,76,195,71,195,68,191,64,191,61,185,58,186,52,182,52,183,44,185,39,185,36,172,38,159,48,155,50,147,47" alt="大野市" href="javascript:setArea(4);" shape="poly">
+<area coords="88,47,83,54,80,51,78,57,73,55,75,60,78,67,80,72,86,67,92,66,97,65,97,62,98,57,101,54,94,52" alt="越前町" href="javascript:setArea(8);" shape="poly">
+<area coords="102,54,98,59,97,64,105,63,113,63,119,62,125,64,126,60,119,57,113,55,109,56,108,54" alt="鯖江市" href="javascript:setArea(8);" shape="poly">
+<area coords="54,129,59,134,56,137,57,144,52,142,55,150,60,154,64,155,66,149,69,144,70,136,72,133,68,126,65,122,60,121,54,115,56,121,57,126" alt="若狭町" href="javascript:setArea(9);" shape="poly">
+<area coords="133,62,126,65,124,68,122,74,119,75,117,79,118,84,124,83,127,83,130,88,135,89,140,88,139,82,140,76,140,71,144,66,137,61" alt="池田町" href="javascript:setArea(5);" shape="poly">
+<area coords="91,66,85,69,81,72,85,76,92,80,98,81,99,86,104,79,113,79,117,76,122,74,122,70,125,65,120,62,114,62,109,64,105,65,102,62,99,63,96,67" alt="越前市" href="javascript:setArea(5);" shape="poly">
+<area coords="80,76,90,85,93,93,98,102,104,105,112,108,120,112,122,107,125,99,125,92,129,87,126,84,122,82,117,82,114,80,110,79,106,78,101,86,98,85,95,80,88,79" alt="南越前町" href="javascript:setArea(5);" shape="poly">
+<area coords="78,97,77,99,81,104,78,112,81,121,82,129,85,136,90,136,94,134,94,128,96,126,101,127,104,121,101,112,98,110,100,104,97,100,95,95,93,97,92,104,90,110,86,110,83,106,86,102,83,96" alt="敦賀市" href="javascript:setArea(6);" shape="poly">
+<area coords="61,121,67,124,72,130,73,138,80,141,84,134,83,129,83,126,80,124,79,114,81,111,80,100,73,100,75,107,75,112,76,116,73,119,68,120,65,118" alt="美浜町" href="javascript:setArea(6);" shape="poly">
+<area coords="29,146,27,151,22,154,30,155,43,155,49,160,53,156,59,156,59,152,54,149,50,143,55,143,57,136,56,133,53,128,52,134,48,133,43,130,37,129,36,134,42,135,42,141,37,142,32,142" alt="小浜市" href="javascript:setArea(7);" shape="poly">
+<area coords="30,133,25,134,24,139,22,144,18,146,11,147,6,149,12,156,15,162,26,163,37,167,46,164,51,160,46,157,41,156,35,156,28,155,20,152,27,149,29,144,25,142,28,135" alt="おおい町" href="javascript:setArea(7);" shape="poly">
+<area coords="3,132,1,138,3,144,7,149,14,147,22,146,22,142,15,142,10,139,8,134" alt="高浜町" href="javascript:setArea(7);" shape="poly">
+<area alt="全県" href="javascript:setArea(0)" coords="15,15,55,45" shape="rect">
+<area nohref shape="default">
+</map>
+</div>
+<div style="position:absolute;left:615px;top:230px;z-index:0;">
+<div class="hanTitle">凡例</div>
+<table class="hanrei">
+<tbody>
+<tr>
+<td>
+<div width="14" height="14" class="icon_river river_3"></div>
+</td><td nowrap="nowrap" width="116">はん濫危険水位超過<br>(危険水位)</td>
+</tr>
+<tr>
+<td>
+<div width="14" height="14" class="icon_river river_5"></div>
+</td><td nowrap="nowrap">避難判断水位超過<br>(特別警戒水位)</td>
+</tr>
+<tr>
+<td>
+<div width="14" height="14" class="icon_river river_2"></div>
+</td><td nowrap="nowrap">はん濫注意水位超過<br>(警戒水位)</td>
+</tr>
+<tr>
+<td>
+<div width="14" height="14" class="icon_river river_1"></div>
+</td><td nowrap="nowrap">水防団待機水位超過<br>(通報水位)</td>
+</tr>
+<tr>
+<td>
+<div width="14" height="14" class="icon_river river_0"></div>
+</td><td nowrap="nowrap">通常</td>
+</tr>
+<tr>
+<td>
+<div width="14" height="14" class="icon_river river_kessoku"></div>
+</td><td nowrap="nowrap">欠測/無効</td>
+</tr>
+</tbody>
+</table>
+<br>
+<div class="hanTitle">凡例(危機管理型水位計局)</div>
+<span style="font-size:8pt;">雨等によりある程度の水位を超えないと<br>測定しません</span>
+<table class="hanrei">
+<tbody>
+<tr>
+<td><img border="0" height="14" width="14" src="../img/rivergage_3.gif"></td><td nowrap="nowrap" width="116">危険水位超過</td>
+</tr>
+<tr>
+<td><img border="0" height="14" width="14" src="../img/rivergage_1.gif"></td><td nowrap="nowrap" width="116">観測開始水位超過</td>
+</tr>
+<tr>
+<td><img border="0" height="14" width="14" src="../img/rivergage_0.gif"></td><td nowrap="nowrap" width="116">平常水位</td>
+</tr>
+<tr>
+<td><img border="0" height="14" width="14" src="../img/rivergage_kessoku.gif"></td><td nowrap="nowrap" width="116">欠測/無効</td>
+</tr>
+</tbody>
+</table>
+</div>
+</form>
+</body>
+</html>
