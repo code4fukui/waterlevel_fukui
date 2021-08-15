@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+</head><body>
+<script type="module">
+import { h1, add, link } from "https://js.sabae.cc/stdom.js";
+import { CSVMap } from "https://code4fukui.github.io/csv-map/csv-map.js";
+import { CSV } from "https://js.sabae.cc/CSV.js";
+import { QRCode } from "https://code4fukui.github.io/qr-code/qr-code.js";
+import { Day } from "https://code4fukui.github.io/day-es/Day.js";
+import { getCurrentPosition } from "https://js.sabae.cc/getCurrentPosition.js";
+import { Geo3x3 } from "https://geo3x3.com/Geo3x3.js";
+import { sleep } from "https://js.sabae.cc/sleep.js";
+
+class WaterLevelMap extends CSVMap {
+  constructor() {
+    super();
+  }
+  async getMarker(d, ll) {
+    let a1 = d['河川水位'];
+    let a2 = d['はん濫危険水位']; //  || d['避難判断水位'] || d['はん濫注意水位'] || d['水防団待機水位'];
+
+    if (String(a1).match(/^[\.0-9]*$/) == null) {
+      a1 = 0;
+    }
+    if (String(a2).match(/^[\.0-9]*$/) == null) {
+      a2 = a1;
+    }
+    
+    if (d['はん濫危険水位']) {
+      const marker = L.polyline([
+        [ll[0] + 0.01, ll[1] - 0.01],
+        [ll[0] + 0.01, ll[1] + 0.01],
+      ], { color: "red" });
+      this.iconlayer.addLayer(marker);
+    }
+    const marker = L.polygon([
+      [ll[0] + 0.01, ll[1] - 0.01],
+      [ll[0],        ll[1] - 0.01],
+      [ll[0],        ll[1] + 0.01],
+      [ll[0] + 0.01, ll[1] + 0.01],
+    ], { color: "gray", fillColor: "gray", stroke: false });
+
+    const n = d['水位の推移'].split(" → ").map(s => {
+      const n = s.match(/(\d\.\d+)m/);
+      return n ? parseFloat(n[1]) : 0;
+    });
+    const pnt = [];
+    pnt.push([ll[0], ll[1] - 0.01]);
+    for (let i = 0; i < n.length; i++) {
+      const r = n[i] / a2 * 0.01; // + Math.random() * 0.005;
+      pnt.push([ll[0] + r, ll[1] - 0.01 + (0.02) / (n.length - 1) * i]);
+    }
+    pnt.push([ll[0], ll[1] + 0.01]);
+    const marker2 = L.polygon(pnt, { color: "blue", fillColor: "blue" });
+    this.iconlayer.addLayer(marker2);
+    return marker;
+  }
+}
+
+customElements.define("waterlever-map", WaterLevelMap);
+
+onload = async () => {
+  document.body.style.textAlign = "center";
+
+  h1("福井県河川水位計マップ");
+
+  const map = new WaterLevelMap();
+  document.body.appendChild(map);
+
+  const sensors = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/waterlevel_fukui/sensors.csv"));
+  const data = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/waterlevel_fukui/data/" + new Day().toString() + ".csv")).reverse();
+
+  const getTransition = (data) => {
+    const n = Math.min(5, data.length);
+    const res = [];
+    for (let i = 0; i < n; i++) {
+      const d = data[i];
+      res.push(d.河川水位 + "m(" + d.日時.substring(d.日時.length - 5) + ")");
+    }
+    const t = res.reverse().join(" → ");
+    return t;
+  };
+  sensors.forEach(s => {
+    const d = data.find(d => d.id == s.id);
+    s.河川水位 = d.河川水位;
+    s.水位の推移 = getTransition(data.filter(d => d.id == s.id));
+    s.日時 = d.日時;
+    delete s.日付;
+  });
+  map.value = sensors;
+
+  const btn = document.createElement("button");
+  btn.textContent = "現在位置付近を見る(GPS等使用)";
+  btn.style.margin = "1em";
+  btn.onclick = async () => {
+    const pos = await getCurrentPosition();
+    map.map.flyTo(new L.LatLng(pos.latitude, pos.longitude), 14);
+  };
+  document.body.appendChild(btn);
+  add("br");
+
+  link("DATA: CC BY 福井県河川水位オープンデータ", "https://github.com/code4fukui/waterlevel_fukui");
+  add("br");
+
+  document.body.appendChild(new QRCode());
+
+  // position hash
+  if (document.location.hash.length > 1) {
+    const geo3x3 = document.location.hash.substring(1);
+    const pos = Geo3x3.decode(geo3x3);
+    console.log(pos);
+    await sleep(100);
+    //map.map.setView([pos.lat, pos.lng], pos.level);
+    map.map.flyTo(new L.LatLng(pos.lat, pos.lng), pos.level);
+  }
+  const setHash = () => {
+    const ll = map.map.getCenter();
+    const z = map.map.getZoom();
+    //console.log(ll, z);
+    const geo3x3 = Geo3x3.encode(ll.lat, ll.lng, z);
+    document.location.hash = geo3x3;
+  };
+  map.map.on("moveend", setHash);
+  map.map.on("zoomlevelschange", setHash);
+};
+</script>
+</body>
+</html>

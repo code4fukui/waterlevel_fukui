@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 </head><body>
 <script type="module">
-import { h1, add } from "https://js.sabae.cc/stdom.js";
+import { h1, add, link } from "https://js.sabae.cc/stdom.js";
 import { CSVMap } from "https://code4fukui.github.io/csv-map/csv-map.js";
 import { CSV } from "https://js.sabae.cc/CSV.js";
 import { QRCode } from "https://code4fukui.github.io/qr-code/qr-code.js";
@@ -59,6 +59,9 @@ onload = async () => {
     map.map.flyTo(new L.LatLng(pos.latitude, pos.longitude), 14);
   };
   document.body.appendChild(btn);
+  add("br");
+  
+  link("DATA: CC BY 福井県河川水位オープンデータ", "https://github.com/code4fukui/waterlevel_fukui");
   add("br");
   
   document.body.appendChild(new QRCode());

@@ -1,6 +1,7 @@
 # 福井県河川水位オープンデータ
 
-https://code4fukui.github.io/waterlevel_fukui/
+- https://code4fukui.github.io/waterlevel_fukui/
+- https://code4fukui.github.io/waterlevel_fukui/graph.html
 
 ## CSVオープンデータ
 
