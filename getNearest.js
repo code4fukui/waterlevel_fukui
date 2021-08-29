@@ -7,7 +7,7 @@ let sensors;
 
 const getNearest = async (lat, lng) => {
   if (!sensors) {
-    sensors = CSV.toJSON(await CSV.fetch("./sensors.csv"));
+    sensors = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/waterlevel_fukui/sensors.csv"));
   }
   sensors.forEach(d => {
     const p = Geo3x3.decode(d.geo3x3);
