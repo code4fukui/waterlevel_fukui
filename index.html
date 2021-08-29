@@ -7,6 +7,7 @@ import { CSV } from "https://js.sabae.cc/CSV.js";
 import { QRCode } from "https://code4fukui.github.io/qr-code/qr-code.js";
 import { Day } from "https://code4fukui.github.io/day-es/Day.js";
 import { getCurrentPosition } from "https://js.sabae.cc/getCurrentPosition.js";
+import { sleep } from "https://js.sabae.cc/sleep.js";
 
 onload = async () => {
   document.body.style.textAlign = "center";
@@ -15,9 +16,11 @@ onload = async () => {
 
   const map = new CSVMap();
   document.body.appendChild(map);
+  await sleep(10);
 
   const sensors = CSV.toJSON(await CSV.fetch("./sensors.csv"));
   const data = CSV.toJSON(await CSV.fetch("./data/" + new Day().toString() + ".csv")).reverse();
+  console.log(data, sensors);
 
   const getTransition = (data) => {
     const n = Math.min(5, data.length);
