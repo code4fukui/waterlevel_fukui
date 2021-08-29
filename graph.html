@@ -72,6 +72,7 @@ onload = async () => {
 
   const map = new WaterLevelMap();
   document.body.appendChild(map);
+  await sleep(10);
 
   const sensors = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/waterlevel_fukui/sensors.csv"));
   const data = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/waterlevel_fukui/data/" + new Day().toString() + ".csv")).reverse();
