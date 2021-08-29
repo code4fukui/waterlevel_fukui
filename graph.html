@@ -45,11 +45,18 @@ class WaterLevelMap extends CSVMap {
     });
     const pnt = [];
     pnt.push([ll[0], ll[1] - 0.01]);
-    for (let i = 0; i < n.length; i++) {
-      const r = n[i] / a2 * 0.01; // + Math.random() * 0.005;
-      pnt.push([ll[0] + r, ll[1] - 0.01 + (0.02) / (n.length - 1) * i]);
+    if (n.length > 1) {
+      for (let i = 0; i < n.length; i++) {
+        const r = n[i] / a2 * 0.01; // + Math.random() * 0.005;
+        pnt.push([ll[0] + r, ll[1] - 0.01 + (0.02) / (n.length - 1) * i]);
+      }
+    } else {
+      const r = n[0] / a2 * 0.01; // + Math.random() * 0.005;
+      pnt.push([ll[0] + r, ll[1] - 0.01]);
+      pnt.push([ll[0] + r, ll[1] - 0.01 + 0.02]);
     }
     pnt.push([ll[0], ll[1] + 0.01]);
+    console.log(pnt, ll);
     const marker2 = L.polygon(pnt, { color: "blue", fillColor: "blue" });
     this.iconlayer.addLayer(marker2);
     return marker;
@@ -68,6 +75,7 @@ onload = async () => {
 
   const sensors = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/waterlevel_fukui/sensors.csv"));
   const data = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/waterlevel_fukui/data/" + new Day().toString() + ".csv")).reverse();
+  console.log(data, sensors);
 
   const getTransition = (data) => {
     const n = Math.min(5, data.length);
