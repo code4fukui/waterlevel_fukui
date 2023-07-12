@@ -41,7 +41,11 @@ class WaterLevelMap extends CSVMap {
 
     const n = d['水位の推移'].split(" → ").map(s => {
       const n = s.match(/(\d\.\d+)m/);
-      return n ? parseFloat(n[1]) : 0;
+      if (!n) {
+        return 0;
+      }
+      const n2 = parseFloat(n[1]);
+      return isNaN(n2) ? 0 : n2;
     });
     const pnt = [];
     pnt.push([ll[0], ll[1] - 0.01]);
@@ -51,12 +55,13 @@ class WaterLevelMap extends CSVMap {
         pnt.push([ll[0] + r, ll[1] - 0.01 + (0.02) / (n.length - 1) * i]);
       }
     } else {
-      const r = n[0] / a2 * 0.01; // + Math.random() * 0.005;
+      const a3 = a2 == "" || isNaN(a2) ? 1 : a2;
+      const r = n[0] / a3 * 0.01; // + Math.random() * 0.005;
+      //console.log(n[0], a2, a3, r);
       pnt.push([ll[0] + r, ll[1] - 0.01]);
       pnt.push([ll[0] + r, ll[1] - 0.01 + 0.02]);
     }
     pnt.push([ll[0], ll[1] + 0.01]);
-    console.log(pnt, ll);
     const marker2 = L.polygon(pnt, { color: "blue", fillColor: "blue" });
     this.iconlayer.addLayer(marker2);
     return marker;
@@ -105,6 +110,9 @@ onload = async () => {
     map.map.flyTo(new L.LatLng(pos.latitude, pos.longitude), 14);
   };
   document.body.appendChild(btn);
+  add("br");
+
+  link("水位位置表示", "./");
   add("br");
 
   link("DATA: CC BY 福井県河川水位オープンデータ", "https://github.com/code4fukui/waterlevel_fukui");
