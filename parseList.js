@@ -38,7 +38,8 @@ const parseList = (txt) => {
       }
       const n = s.match(/(\d+\.\d+)/);
       if (!n) {
-        throw new Error(s);
+        //throw new Error(s);
+        return "";
       }
       return n[1];
     }
