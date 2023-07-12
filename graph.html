@@ -50,16 +50,16 @@ class WaterLevelMap extends CSVMap {
     const pnt = [];
     pnt.push([ll[0], ll[1] - 0.01]);
     if (n.length > 1) {
+      const a3 = a2 == "" || isNaN(a2) ? 1 : a2;
       for (let i = 0; i < n.length; i++) {
-        const r = n[i] / a2 * 0.01; // + Math.random() * 0.005;
+        const r = n[i] / a3 * 0.01; // + Math.random() * 0.005;
         pnt.push([ll[0] + r, ll[1] - 0.01 + (0.02) / (n.length - 1) * i]);
       }
     } else {
       const a3 = a2 == "" || isNaN(a2) ? 1 : a2;
       const r = n[0] / a3 * 0.01; // + Math.random() * 0.005;
-      //console.log(n[0], a2, a3, r);
-      pnt.push([ll[0] + r, ll[1] - 0.01]);
-      pnt.push([ll[0] + r, ll[1] - 0.01 + 0.02]);
+      pnt.push([ll[0] + r2, ll[1] - 0.01]);
+      pnt.push([ll[0] + r2, ll[1] - 0.01 + 0.02]);
     }
     pnt.push([ll[0], ll[1] + 0.01]);
     const marker2 = L.polygon(pnt, { color: "blue", fillColor: "blue" });
