@@ -26,7 +26,7 @@ for (const d of sensors) {
     d.geo3x3 = geo3x3;
   } else {
     const s = d.観測所名 + " has no id";
-    console.log(s);
+    console.log(d.id, s);
     //throw new Error(s);
   }
   d.url = `http://ame.pref.fukui.jp/bousai/servlet/bousaiweb.servletBousaiGraph?rg=1&sn=${d.id}&sy=gra_river`;
