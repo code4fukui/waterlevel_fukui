@@ -41,16 +41,21 @@ onload = async () => {
     // "blue", "green", "orange", "yellow", "red", "purple", "violet"
     const p = (s) => parseFloat(s);
     if (p(s.河川水位) >= p(s.はん濫危険水位)) {
-      s.color = "red";
+      //s.color = "red";
+      s.color = "purple";
     } else if (p(s.河川水位) >= p(s.避難判断水位)) {
-      s.color = "orange";
+      //s.color = "orange";
+      s.color = "red";
     } else if (p(s.河川水位) >= p(s.はん濫注意水位)) {
       s.color = "yellow";
     } else if (p(s.河川水位) >= p(s.水防団待機水位)) {
-      s.color = "purple";
+      //s.color = "purple";
+      s.color = "green"; // lightblue
     } else {
-      s.color = "green";
+      //s.color = "green";
+      s.color = "white";
     }
+    //console.log(s.color, s.河川水位, s.はん濫危険水位, )
   });
   map.value = sensors;
 
