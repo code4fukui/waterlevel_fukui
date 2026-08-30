@@ -79,8 +79,10 @@ onload = async () => {
   document.body.appendChild(map);
   await sleep(10);
 
-  const sensors = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/waterlevel_fukui/sensors.csv"));
-  const data = CSV.toJSON(await CSV.fetch("https://code4fukui.github.io/waterlevel_fukui/data/" + new Day().toString() + ".csv")).reverse();
+  const base = "https://code4fukui.github.io/waterlevel_fukui/";
+  //const base = "./";
+  const sensors = CSV.toJSON(await CSV.fetch(base + "sensors.csv"));
+  const data = CSV.toJSON(await CSV.fetch(base + "data/" + new Day().toString() + ".csv")).reverse();
   console.log(data, sensors);
 
   const getTransition = (data) => {
@@ -116,6 +118,7 @@ onload = async () => {
   add("br");
 
   link("DATA: CC BY 福井県河川水位オープンデータ", "https://github.com/code4fukui/waterlevel_fukui");
+  link("src on GitHub", "https://github.com/code4fukui/waterlevel_fukui");
   add("br");
 
   document.body.appendChild(new QRCode());
