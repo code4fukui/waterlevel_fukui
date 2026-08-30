@@ -23,22 +23,30 @@ class WaterLevelMap extends CSVMap {
     marker.bindPopup(popup, { maxHeight: 500 });
   }
   async getMarker(d, ll) {
-    let a1 = d['河川水位'];
-    let a2 = d['はん濫危険水位']; //  || d['避難判断水位'] || d['はん濫注意水位'] || d['水防団待機水位'];
+    const toNumber = value => {
+      const n = parseFloat(value);
+      return Number.isFinite(n) ? n : null;
+    };
+    const waterLevel = toNumber(d['河川水位']) || 0;
+    const levels = [
+      ['はん濫危険水位', 'red'],
+      ['避難判断水位', 'orange'],
+      ['はん濫注意水位', '#e6b800'],
+      ['水防団待機水位', '#7ac943'],
+    ].map(([name, color]) => ({ name, color, value: toNumber(d[name]) }));
+    const graphMax = Math.max(waterLevel, ...levels.map(level => level.value || 0), 1);
 
-    if (String(a1).match(/^[\.0-9]*$/) == null) {
-      a1 = 0;
-    }
-    if (String(a2).match(/^[\.0-9]*$/) == null) {
-      a2 = a1;
-    }
-    
-    if (d['はん濫危険水位']) {
+    const levelMarkers = [];
+    for (const level of levels) {
+      if (level.value == null) {
+        continue;
+      }
+      const y = ll[0] + level.value / graphMax * 0.01;
       const marker = L.polyline([
-        [ll[0] + 0.01, ll[1] - 0.01],
-        [ll[0] + 0.01, ll[1] + 0.01],
-      ], { color: "red" });
-      this.iconlayer.addLayer(marker);
+        [y, ll[1] - 0.01],
+        [y, ll[1] + 0.01],
+      ], { color: level.color, weight: 3 });
+      levelMarkers.push(marker);
     }
     const marker = L.polygon([
       [ll[0] + 0.01, ll[1] - 0.01],
@@ -58,21 +66,18 @@ class WaterLevelMap extends CSVMap {
     const pnt = [];
     pnt.push([ll[0], ll[1] - 0.01]);
     if (n.length > 1) {
-      const a3 = a2 == "" || isNaN(a2) ? 1 : a2;
       for (let i = 0; i < n.length; i++) {
-        const r = n[i] / a3 * 0.01; // + Math.random() * 0.005;
+        const r = n[i] / graphMax * 0.01;
         pnt.push([ll[0] + r, ll[1] - 0.01 + (0.02) / (n.length - 1) * i]);
       }
     } else {
-      const a3 = a2 == "" || isNaN(a2) ? 1 : a2;
-      const r = n[0] / a3 * 0.01; // + Math.random() * 0.005;
-      pnt.push([ll[0] + r2, ll[1] - 0.01]);
-      pnt.push([ll[0] + r2, ll[1] - 0.01 + 0.02]);
+      const r = n[0] / graphMax * 0.01;
+      pnt.push([ll[0] + r, ll[1] - 0.01]);
+      pnt.push([ll[0] + r, ll[1] - 0.01 + 0.02]);
     }
     pnt.push([ll[0], ll[1] + 0.01]);
     const marker2 = L.polygon(pnt, { color: "blue", fillColor: "blue" });
-    this.iconlayer.addLayer(marker2);
-    return marker;
+    return L.featureGroup([marker, marker2, ...levelMarkers]);
   }
 }
 
@@ -86,6 +91,17 @@ onload = async () => {
   const map = new WaterLevelMap();
   document.body.appendChild(map);
   await sleep(10);
+
+  const legend = document.createElement("div");
+  legend.style.margin = "0.7em";
+  legend.innerHTML = [
+    ["red", "はん濫危険水位"],
+    ["orange", "避難判断水位"],
+    ["#e6b800", "はん濫注意水位"],
+    ["#7ac943", "水防団待機水位"],
+    ["blue", "河川水位の推移"],
+  ].map(([color, label]) => `<span style="display:inline-block; margin:0 .7em .4em 0"><span style="display:inline-block; width:1.8em; border-top:3px solid ${color}; margin-right:.35em; vertical-align:middle"></span>${label}</span>`).join("");
+  document.body.appendChild(legend);
 
   const base = "https://code4fukui.github.io/waterlevel_fukui/";
   //const base = "./";
