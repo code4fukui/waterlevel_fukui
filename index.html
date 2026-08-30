@@ -9,12 +9,25 @@ import { Day } from "https://code4fukui.github.io/day-es/Day.js";
 import { getCurrentPosition } from "https://js.sabae.cc/getCurrentPosition.js";
 import { sleep } from "https://js.sabae.cc/sleep.js";
 
+class WaterLevelMap extends CSVMap {
+  async bindPopup(d, marker) {
+    const sensors = this.data.filter(s => s.geo3x3 == d.geo3x3);
+    if (sensors.length <= 1) {
+      return super.bindPopup(d, marker);
+    }
+    const popup = sensors.map(s => `<div style="margin-bottom: 1em">${this.makeTable(s)}</div>`).join("");
+    marker.bindPopup(popup, { maxHeight: 500 });
+  }
+}
+
+customElements.define("waterlevel-map", WaterLevelMap);
+
 onload = async () => {
   document.body.style.textAlign = "center";
 
   h1("福井県河川水位計マップ");
 
-  const map = new CSVMap();
+  const map = new WaterLevelMap();
   document.body.appendChild(map);
   await sleep(10);
 

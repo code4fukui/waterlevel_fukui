@@ -14,6 +14,14 @@ class WaterLevelMap extends CSVMap {
   constructor() {
     super();
   }
+  async bindPopup(d, marker) {
+    const sensors = this.data.filter(s => s.geo3x3 == d.geo3x3);
+    if (sensors.length <= 1) {
+      return super.bindPopup(d, marker);
+    }
+    const popup = sensors.map(s => `<div style="margin-bottom: 1em">${this.makeTable(s)}</div>`).join("");
+    marker.bindPopup(popup, { maxHeight: 500 });
+  }
   async getMarker(d, ll) {
     let a1 = d['河川水位'];
     let a2 = d['はん濫危険水位']; //  || d['避難判断水位'] || d['はん濫注意水位'] || d['水防団待機水位'];
