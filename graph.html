@@ -31,7 +31,7 @@ class WaterLevelMap extends CSVMap {
     const levels = [
       ['はん濫危険水位', 'red'],
       ['避難判断水位', 'orange'],
-      ['はん濫注意水位', '#e6b800'],
+      ['はん濫注意水位', '#ffd700'],
       ['水防団待機水位', '#7ac943'],
     ].map(([name, color]) => ({ name, color, value: toNumber(d[name]) }));
     const graphMax = Math.max(waterLevel, ...levels.map(level => level.value || 0), 1);
@@ -97,7 +97,7 @@ onload = async () => {
   legend.innerHTML = [
     ["red", "はん濫危険水位"],
     ["orange", "避難判断水位"],
-    ["#e6b800", "はん濫注意水位"],
+    ["#ffd700", "はん濫注意水位"],
     ["#7ac943", "水防団待機水位"],
     ["blue", "河川水位の推移"],
   ].map(([color, label]) => `<span style="display:inline-block; margin:0 .7em .4em 0"><span style="display:inline-block; width:1.8em; border-top:3px solid ${color}; margin-right:.35em; vertical-align:middle"></span>${label}</span>`).join("");
