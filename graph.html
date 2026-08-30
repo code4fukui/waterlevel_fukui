@@ -55,23 +55,21 @@ class WaterLevelMap extends CSVMap {
       [ll[0] + 0.01, ll[1] + 0.01],
     ], { color: "gray", fillColor: "gray", stroke: false });
 
-    const n = d['水位の推移'].split(" → ").map(s => {
-      const n = s.match(/(\d\.\d+)m/);
-      if (!n) {
-        return 0;
-      }
-      const n2 = parseFloat(n[1]);
-      return isNaN(n2) ? 0 : n2;
-    });
+    const samples = d.waterLevelHistory || [];
+    const startTime = samples[0]?.time;
+    const elapsedTime = samples.at(-1)?.time - startTime;
     const pnt = [];
     pnt.push([ll[0], ll[1] - 0.01]);
-    if (n.length > 1) {
-      for (let i = 0; i < n.length; i++) {
-        const r = n[i] / graphMax * 0.01;
-        pnt.push([ll[0] + r, ll[1] - 0.01 + (0.02) / (n.length - 1) * i]);
+    if (samples.length > 1) {
+      for (let i = 0; i < samples.length; i++) {
+        const r = samples[i].waterLevel / graphMax * 0.01;
+        const timeRatio = elapsedTime > 0
+          ? (samples[i].time - startTime) / elapsedTime
+          : i / (samples.length - 1);
+        pnt.push([ll[0] + r, ll[1] - 0.01 + 0.02 * timeRatio]);
       }
     } else {
-      const r = n[0] / graphMax * 0.01;
+      const r = (samples[0]?.waterLevel || 0) / graphMax * 0.01;
       pnt.push([ll[0] + r, ll[1] - 0.01]);
       pnt.push([ll[0] + r, ll[1] - 0.01 + 0.02]);
     }
@@ -109,21 +107,20 @@ onload = async () => {
   const data = CSV.toJSON(await CSV.fetch(base + "data/" + new Day().toString() + ".csv")).reverse();
   console.log(data, sensors);
 
-  const getTransition = (data) => {
-    const n = Math.min(5, data.length);
-    const res = [];
-    for (let i = 0; i < n; i++) {
-      const d = data[i];
-      res.push(d.河川水位 + "m(" + d.日時.substring(d.日時.length - 5) + ")");
-    }
-    const t = res.reverse().join(" → ");
-    return t;
+  const getHistory = data => {
+    return data.slice(0, 5).reverse().map(d => ({
+      waterLevel: parseFloat(d.河川水位) || 0,
+      time: new Date(d.日時).getTime(),
+      label: d.河川水位 + "m(" + d.日時.substring(d.日時.length - 5) + ")",
+    }));
   };
   sensors.forEach(s => {
     const d = data.find(d => d.id == s.id);
+    const history = getHistory(data.filter(d => d.id == s.id));
     s.河川水位 = d.河川水位;
-    s.水位の推移 = getTransition(data.filter(d => d.id == s.id));
+    s.水位の推移 = history.map(d => d.label).join(" → ");
     s.日時 = d.日時;
+    Object.defineProperty(s, "waterLevelHistory", { value: history });
     delete s.日付;
   });
   map.value = sensors;
