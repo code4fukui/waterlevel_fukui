@@ -103,8 +103,8 @@ onload = async () => {
   ].map(([color, label]) => `<span style="display:inline-block; margin:0 .7em .4em 0"><span style="display:inline-block; width:1.8em; border-top:3px solid ${color}; margin-right:.35em; vertical-align:middle"></span>${label}</span>`).join("");
   document.body.appendChild(legend);
 
-  const base = "https://code4fukui.github.io/waterlevel_fukui/";
-  //const base = "./";
+  //const base = "https://code4fukui.github.io/waterlevel_fukui/";
+  const base = "./";
   const sensors = CSV.toJSON(await CSV.fetch(base + "sensors.csv"));
   const data = CSV.toJSON(await CSV.fetch(base + "data/" + new Day().toString() + ".csv")).reverse();
   console.log(data, sensors);
